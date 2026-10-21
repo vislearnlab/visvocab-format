@@ -256,3 +256,26 @@ print(sp[(sp['style'] == 'doodle') & (sp.note != '')][['word', 'note']].to_strin
       ladybug                                          NaN
        rabbit                                          NaN
       hamster                                          NaN
+
+## Redo candidates for the flagged line drawings and doodles (not swapped in)
+
+`docs/figures/redo2_candidates.png`: per flagged word, the photo, the
+current version and its cut-out, then each candidate and its cut-out.
+Generated with `10_stylize.py --candidates` into
+`pipeline/work/candidates/` (gitignored); **nothing in `stimuli/images/`
+has changed**.
+
+- **Line drawings** (object control, seeds 2–4, label “single {word},
+  plain empty white background”): the background scribble is gone in
+  most candidates. Clean options: cloud s2, acorn s3, coconut s3,
+  penguin s2, turkey s2. Crow s2/s3 are clean but are almost bare
+  outline, so the cut-out is nearly an empty silhouette. Seed 4 produced
+  stray texture (horizontal stripes for penguin, a grid for crow) for
+  several words.
+- **Doodles** (ControlNet scale 0.4, seeds 2–3): lowering the scale did
+  not make them cruder. It loosened the hold on the silhouette instead.
+  The acorn and coconut drift off the mask, the cloud gets rain, and
+  cow, worm and snake come out *more* detailed (a cartoon face for the
+  worm). None is clearly better than the current version. A crude doodle
+  needs a different method (a QuickDraw-trained model, or simplifying
+  the strokes of the line drawing) rather than another seed sweep.
