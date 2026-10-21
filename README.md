@@ -18,19 +18,29 @@ stimuli/
   images/photo/{word}.png   600x600 centre crop of the THINGS exemplar
   images/cutout/{word}.png  the same crop, background -> RGB(130,130,130); object position and size unchanged
   images/background_only/   photo with the object's bounding box greyed out (used only to score background diagnosticity)
+  images/illustration{,_cutout}/  picture-book versions of the same crop (SDXL + canny ControlNet), and their cut-outs in the photo mask
+  images/line{,_cutout}/, images/doodle{,_cutout}/   line drawings and QuickDraw-style doodles (added as they are finished)
+  images/history/round{k}/  earlier versions of regenerated stylized images (only the words that changed)
+  stylize_params.csv        seed, ControlNet scale and prompt label per style x word
   images/calib_duck.jpg     calibration / get-ready image (copy of the hosted one)
   masks/{word}.png          SAM mask of the picked exemplar, full source resolution
   stim_stats.csv            object area, edge contact, centroid per stimulus
   audio/{mp3,ogg}/          {find,where,see,look_at}_{word} for all 32 words + get_ready, great_job, ready_to_go, pinwheel
 pipeline/                   numbered scripts; run from pipeline/ (see below)
-  output/                   CHS hard-pair performance, exemplar scores, pair similarity, saliency, item moderators, projection
+  output/                   CHS hard-pair performance, exemplar scores, pair similarity, saliency, item moderators, projection,
+                            silhouette check, image embeddings (embeddings_{dinov3,clip}.npz)
+analysis/                   Quarto notebooks (.qmd) and their rendered GitHub markdown (.md + figures)
+  01_photo_vs_cutout        item scores and CHS projection behind docs/report.md
+  02_format_similarity      DINOv3 / CLIP pair similarity per format, same-format baseline, CLIP 2AFC, illustration rounds
+  03_umap                   UMAP of all formats, with and without the per-format mean removed
+  04_stylized_stimuli       contact sheet, generation settings, silhouette check, known flaws
 experiment/
   chs_jspsych/experiment.js paste into "jsPsych Experiment Code" on the CHS study page
   chs_jspsych/preview.html  runs experiment.js locally with stand-ins for the CHS recording/consent/survey plugins
   lookit_reference/         the original CHS Lookit protocol generators (sample1, sample2), unmodified
 docs/
   report.md                 the study write-up
-  figures/                  all_stimuli.png, similarity_photo_vs_cutout.png, chs_projection.png
+  figures/                  all_stimuli.png, similarity_photo_vs_cutout.png, chs_projection.png, format_sheet.png
 ```
 
 ## Experiment
@@ -78,6 +88,17 @@ python 06_saliency.py                # GBVS left/right imbalance of each pair di
 python 07_item_moderators.py         # background diagnosticity, context discriminability, background saliency share
 python 08_chs_projection.py          # CHS observed looking + similarity-based cut-out projection
 python 09_stimulus_sheet.py          # docs/figures/all_stimuli.png
+python 10_stylize.py illustration    # also: line, doodle; ~2.5 min/image on Apple silicon (SDXL fp16)
+python 11_silhouette_check.py        # stylized object vs photo mask: IoU, area ratio
+python 12_embeddings.py              # DINOv3 + CLIP embeddings of every format and history round
+python 13_format_sheet.py            # docs/figures/format_sheet.png, all formats by trial
+```
+
+Notebooks read the pipeline outputs and render in seconds:
+
+```bash
+cd analysis
+QUARTO_PYTHON=$(which python3) quarto render 02_format_similarity.qmd   # or quarto render . for all
 ```
 
 Steps 04-09 run from what is in the repo plus the source photos. Without Polygon, `04` needs `pipeline/work/things`.

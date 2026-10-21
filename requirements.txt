@@ -8,3 +8,6 @@ scipy>=1.9
 pandas>=1.3
 Pillow>=9.0
 matplotlib>=3.6
+diffusers==0.30.3      # 10_stylize.py (SDXL + ControlNet); newer versions need torch>=2.3
+umap-learn>=0.5        # analysis/03_umap
+ipykernel              # quarto render of analysis/*.qmd

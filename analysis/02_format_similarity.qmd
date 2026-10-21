@@ -1,0 +1,171 @@
+---
+title: "Pair similarity across visual formats"
+format: gfm
+jupyter: python3
+execute:
+  warning: false
+---
+
+How alike do the two images of each hard pair look to a vision model, as the stimuli move from photo toward abstraction
+(photo → cut-out → illustration → line drawing → doodle)? Embeddings come from `pipeline/12_embeddings.py`:
+DINOv3 ViT-B/16 (LVD-1689M, pooled CLS) and CLIP ViT-B/32 (the model used in CHS). Similarity is cosine between the
+pair's two images. Formats that have not been generated yet are simply absent.
+
+```{python}
+#| include: false
+import sys, warnings; warnings.filterwarnings('ignore'); sys.path.insert(0, '../pipeline')
+import numpy as np, pandas as pd, matplotlib.pyplot as plt
+from scipy import stats
+from config import OUT, pairs, words
+P, W = pairs(), words()
+ORDER = ['CHS photo', 'photo', 'cutout', 'illustration', 'illustration_cutout', 'line', 'line_cutout', 'doodle', 'doodle_cutout']
+FINAL = ORDER[1:]                      # the new stimuli (all 16 pairs); CHS photo has the 13 CHS pairs only
+MODELS = {'dinov3': 'DINOv3 ViT-B/16', 'clip': 'CLIP ViT-B/32'}
+pd.set_option('display.precision', 3)
+
+def load(model):
+    z = np.load(f'{OUT}/embeddings_{model}.npz')
+    return {tuple(k.split('|')): e for k, e in zip(z['key'], z['emb'])}
+E = {m: load(m) for m in MODELS}
+
+def pair_table(Em):
+    """Per version x pair: raw pair similarity, the same-format baseline (mean similarity of A and of B to every other
+    image in that format), the excess over it, and the partner's rank among the other images (1 = more similar than all)."""
+    rows = []
+    for v in sorted({v for v, _ in Em}):
+        ws = [w for w in W if (v, w) in Em]; ix = {w: i for i, w in enumerate(ws)}
+        X = np.stack([Em[(v, w)] for w in ws]); S = X @ X.T
+        for r in P.itertuples():
+            if r.word_a not in ix or r.word_b not in ix: continue
+            a, b = ix[r.word_a], ix[r.word_b]; o = [i for i in range(len(ws)) if i not in (a, b)]
+            base = (S[a, o].mean() + S[b, o].mean()) / 2
+            rows.append(dict(version=v, pair=r.pair, domain=r.domain, sim=S[a, b], baseline=base, excess=S[a, b] - base,
+                             rank=np.mean(np.r_[S[a, b] > S[a, o], S[a, b] > S[b, o]])))
+    return pd.DataFrame(rows)
+T = {m: pair_table(E[m]) for m in MODELS}
+fmts = [f for f in ORDER if f in set(T['dinov3'].version)]
+```
+
+## Raw similarity rises with abstraction, but so does everything else
+
+```{python}
+for m, name in MODELS.items():
+    d = T[m][T[m].version.isin(fmts)]
+    print(name); print(d.groupby('version')[['sim', 'baseline', 'excess', 'rank']].mean().reindex(fmts).round(3).to_string(), '\n')
+```
+
+Raw pair similarity goes up as detail is removed. The same-format baseline goes up as much or more: once photo
+texture, lighting and scene are gone, *any* two images in a style resemble each other. Raw cosine is therefore not
+comparable across formats. On an LWL trial the target and distractor are always shown in the same format, so the
+model quantity that matters is the pair's similarity *relative to its format*: the excess, or the partner's rank.
+
+```{python}
+#| fig-width: 12
+#| fig-height: 4.5
+fig, axes = plt.subplots(1, 2, figsize=(12, 4.5), sharey=True)
+for ax, (m, name) in zip(axes, MODELS.items()):
+    g = T[m].groupby('version')[['sim', 'baseline', 'excess']].agg(['mean', 'sem']).reindex(fmts)
+    for col, c in [('sim', 'k'), ('baseline', 'tab:grey'), ('excess', 'tab:red')]:
+        ax.errorbar(range(len(fmts)), g[(col, 'mean')].values, yerr=1.96 * g[(col, 'sem')].values, marker='o', color=c, capsize=3,
+                    label={'sim': 'pair similarity', 'baseline': 'same-format baseline', 'excess': 'pair − baseline'}[col])
+    ax.set_xticks(range(len(fmts))); ax.set_xticklabels(fmts, rotation=25, ha='right'); ax.set_title(name); ax.grid(axis='y', alpha=.3)
+axes[0].set_ylabel('cosine'); axes[0].legend(frameon=False, fontsize=9); fig.tight_layout()
+```
+
+## Per pair: which pairs does abstraction separate, and which does it merge?
+
+Excess similarity per pair. If abstraction removed exactly the details that make a pair confusable, the pair's
+excess should fall; if it removed the details that tell the two apart, it should rise.
+
+```{python}
+for m, name in MODELS.items():
+    w = T[m].pivot(index='pair', columns='version', values='excess')[[f for f in FINAL if f in fmts]]
+    print(name); print(w.sort_values('photo').round(3).to_string(), '\n')
+```
+
+```{python}
+#| fig-width: 12
+#| fig-height: 6
+fin = [f for f in FINAL if f in fmts]
+fig, axes = plt.subplots(1, 2, figsize=(12, 6), sharey=True)
+for ax, (m, name) in zip(axes, MODELS.items()):
+    w = T[m].pivot(index='pair', columns='version', values='excess')[fin]
+    for i, (p, row) in enumerate(w.iterrows()):
+        c = plt.cm.tab20(i % 20); ax.plot(range(len(fin)), row.values, marker='o', ms=4, color=c, lw=1.2)
+        ax.text(len(fin) - 1 + .08, row.values[-1], p, fontsize=7, color=c, va='center')
+    ax.axhline(0, color='k', lw=.6); ax.set_xticks(range(len(fin))); ax.set_xticklabels(fin, rotation=25, ha='right')
+    ax.set_xlim(-.3, len(fin) + .8); ax.set_title(name); ax.grid(axis='y', alpha=.3)
+axes[0].set_ylabel('pair similarity − same-format baseline'); fig.tight_layout()
+```
+
+How much of the item ordering survives each format change? Spearman correlation of per-pair excess across the 16 pairs:
+
+```{python}
+for m, name in MODELS.items():
+    w = T[m].pivot(index='pair', columns='version', values='excess')[fin]
+    print(name); print(w.corr(method='spearman').round(2).to_string(), '\n')
+```
+
+## A recognition-side model measure: CLIP word → image 2AFC
+
+Embedding similarity is not recognition. Closer to the task: give CLIP the spoken word ("a photo of a {word}" /
+"a drawing of a {word}") and ask whether it prefers the target over its partner, in each format. In CHS photos CLIP was
+at ceiling, so this mainly shows whether any format pulls it off ceiling.
+
+```{python}
+import torch, open_clip
+clip, _, _ = open_clip.create_model_and_transforms('ViT-B-32', pretrained='openai'); clip.eval(); tok = open_clip.get_tokenizer('ViT-B-32')
+TEMPL = ['a photo of a {}.', 'a drawing of a {}.', 'an illustration of a {}.', 'a picture of a {}.']
+label = lambda w: 'chicken' if w.startswith('chicken') else w
+with torch.no_grad():
+    TX = {}
+    for w in W:
+        t = clip.encode_text(tok([s.format(label(w)) for s in TEMPL])); t = t / t.norm(dim=-1, keepdim=True)
+        t = t.mean(0); TX[w] = (t / t.norm()).numpy()
+partner = {**dict(zip(P.word_a, P.word_b)), **dict(zip(P.word_b, P.word_a))}
+rows = []
+for v in fmts:
+    for w in W:
+        if (v, w) not in E['clip'] or (v, partner[w]) not in E['clip']: continue
+        lo = 100 * np.array([E['clip'][(v, w)] @ TX[w], E['clip'][(v, w)] @ TX[partner[w]]])
+        rows.append(dict(version=v, word=w, p_correct=np.exp(lo[0]) / np.exp(lo).sum()))
+rec = pd.DataFrame(rows)
+print(rec.groupby('version').p_correct.agg(['mean', 'min', lambda s: (s < .5).sum()]).rename(columns={'<lambda_0>': 'n wrong'}).reindex(fmts).round(3).to_string())
+```
+
+```{python}
+print(rec.pivot(index='word', columns='version', values='p_correct')[fmts].round(2).sort_values('photo').head(12).to_string())
+```
+
+## Illustration rounds
+
+Words whose illustration was regenerated (round 0 = first pass; final = current `stimuli/images/illustration`).
+Only pairs containing a regenerated word can change.
+
+```{python}
+for m, name in MODELS.items():
+    d = T[m]; rr = sorted(v for v in d.version.unique() if 'round' in v)
+    if not rr: continue
+    cols = [v for v in rr if v.startswith('illustration round')] + ['illustration'] + \
+           [v for v in rr if v.startswith('illustration_cutout round')] + ['illustration_cutout']
+    w = d.pivot(index='pair', columns='version', values='excess')[cols]
+    print(name); print(w[(w.max(axis=1) - w.min(axis=1)) > 1e-4].round(3).to_string(), '\n')
+```
+
+## What this means for the format hypothesis
+
+- **Models do not predict that abstraction makes the pairs harder.** Relative to their format, DINOv3 sees the pairs
+  slightly *more* alike in illustrations (excess .10 → .13), CLIP slightly *less* alike (.10 → .07–.09); both are small
+  next to the rise in raw similarity, and the two models disagree on direction. CLIP word → image 2AFC is at ceiling
+  in every format (≥ .99 mean), so no format makes the words harder for it.
+- **If children recognise the words better in illustrations or line drawings**, that is a format effect the
+  embedding models do not predict: a model–child dissociation. The interpretation would be that the details
+  abstraction removes (texture, lighting, background) are noise for toddlers, not cues.
+- **The item-level test is sharper.** Some pairs' excess moves in opposite directions across formats (e.g.
+  lizard–snake drops, acorn–coconut rises). A format × model-excess interaction on baseline-corrected looking tests
+  whether the item-specific changes predict children's item-specific changes. A format main effect with a null
+  interaction is the dissociation.
+- **Caveats.** Cosine on a pooled embedding is one readout of a model, not its discriminability. CLIP 2AFC is near
+  ceiling. Illustration cut-outs differ from photo cut-outs in colour as well as detail, so line drawings and doodles
+  are the cleaner "fewer details" contrast. With 16 pairs the item-level interaction has little power; the format main
+  effect is the realistic primary test.
