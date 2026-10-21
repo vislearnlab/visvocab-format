@@ -50,25 +50,32 @@ else:
     print('not run yet')
 ```
 
-## Known flaws under repair
+## Regenerated illustrations (round 2)
 
-From review of the first-round illustrations. Redo candidates (`10_stylize.py --candidates`, ControlNet scale 0.9,
-seeds 2–4, corrected labels) replace a word once a candidate is picked; the replaced image moves to
-`stimuli/images/history/round{k}/`.
+Flaws found on review of the first-round illustrations, and the redo that replaced each. Candidates were generated with
+ControlNet scale 0.9, seeds 2–4 and a corrected prompt label (`10_stylize.py --candidates`). Picks are **provisional**:
+chosen for the specific flaw and the silhouette IoU against the photo mask. Replaced versions are in
+`stimuli/images/history/round1/`. Every candidate, beside the photo and the old version:
+`docs/figures/illustration_redo_candidates.png`.
 
-| Word | Problem | Fix being tried |
+| Word | Problem in round 1 | Prompt label for the redo |
 | --- | --- | --- |
-| snail | two pairs of eye stalks | label "garden snail with a single pair of eye stalks" |
-| turkey | two heads (the turkey_04s photo shows two birds) | swap the exemplar to turkey_11s, regenerate |
-| acorn | green cap | label "brown acorn with a brown scaly cap" |
-| camel | hind legs muddled | label "camel standing on four legs" |
-| squirrel | white blob at the paws | label "grey squirrel sitting" |
-| crow | grey band across the bottom | label "black crow standing on grass" |
-| cloud | rain streaks | label "single white cloud in a clear blue sky" |
-| cow | pink | label "black and white holstein cow" |
-| snake | yellow / teal | label "brown and black patterned snake" |
-| rabbit | grass inside the cut-out | label "brown wild rabbit" |
-| hamster, monkey | fatter than the photo (IoU .66 / .60; area ×1.37 / ×1.66) | stronger ControlNet (0.9); monkey "monkey sitting" |
+| snail | two pairs of eye stalks | garden snail with a single pair of eye stalks |
+| turkey | two heads (the turkey_04s photo showed two birds) | single turkey with one head (now from turkey_11s) |
+| acorn | green cap | brown acorn with a brown scaly cap |
+| camel | hind legs muddled | camel standing on four legs |
+| squirrel | white blob at the paws | grey squirrel sitting |
+| crow | grey band across the bottom | black crow standing on grass |
+| cloud | rain streaks | single white cloud in a clear blue sky |
+| cow | pink | black and white holstein cow |
+| snake | yellow / teal | brown and black patterned snake |
+| rabbit | grass inside the cut-out | brown wild rabbit |
+| hamster | fatter than the photo (IoU .66, area ×1.37) | hamster (ControlNet 0.9 only) |
+| monkey | fatter than the photo (IoU .60, area ×1.66) | monkey sitting |
 
-Hamster and monkey are fatter because img2img at strength 1.0 with ControlNet at 0.7 lets SDXL drift toward its prior
-body shape; the photo mask then trims the illustration's cut-out.
+Hamster and monkey were fat because img2img at strength 1.0 with ControlNet at 0.7 let SDXL drift toward its prior body
+shape; the photo mask then trimmed the illustration's cut-out. The pick and the reason for each word:
+
+```{python}
+print(sp[(sp['style'] == 'illustration') & (sp['round'] == 2)][['word', 'seed', 'note']].to_string(index=False))
+```
