@@ -69,7 +69,7 @@ audio. All 32 words have recordings for all four carrier phrases (find / where /
 | duck–chicken | duck\_01b, chicken2\_01b | +0.094 | 0.68 → 0.75 | 0.92 | 0.28 / 0.31 | −0.00 → −0.01 |
 | balloon–kite | balloon\_05s, kite\_04s | +0.093 | 0.72 → 0.76 | 0.83 | 0.06 / 0.10 | −0.36 → −0.24 |
 | squirrel–monkey | squirrel\_02s, monkey\_04s | +0.091 | 0.74 → 0.79 | 0.88 | 0.21 / 0.40 | −0.20 → −0.10 |
-| turkey–goat | turkey\_04s, goat\_02n | +0.089 | 0.73 → 0.74 | 0.86 | 0.34 / 0.35 | +0.10 → +0.07 |
+| turkey–goat | turkey\_11s, goat\_02n | +0.089 | 0.68 → 0.66 | 0.86 | 0.35 / 0.35 | +0.05 → +0.03 |
 | lizard–snake | lizard\_03n, snake\_01b | +0.079 | 0.81 → 0.84 | 0.90 | 0.12 / 0.36 | −0.22 → −0.40 |
 | truck–car | truck\_05s, car\_11s (edge) | +0.071 | 0.47 → 0.64 | 0.93 | 0.40 / 0.32 | +0.00 → +0.02 |
 | turtle–frog | turtle\_04s, frog\_02s | +0.067 | 0.81 → 0.82 | 0.89 | 0.28 / 0.42 | −0.12 → −0.23 |
@@ -95,13 +95,13 @@ The table's columns are defined as follows:
 
 ## Visual vs semantic similarity
 
-Removing the background makes 13 of 16 pairs look more alike, raising mean visual similarity from .72 to .76.
+Removing the background makes 12 of 16 pairs look more alike, raising mean visual similarity from .71 to .76.
 Truck–car moves most (.47 → .64), because its photos differ mainly in setting.
 
 - **The format manipulation also changes similarity, by a different amount per pair.** If visual similarity drives
   errors, the pairs that gain most (truck–car, crow–penguin, rabbit–hamster, camel–elephant) should get harder as
   cut-outs.
-- **As photos, semantically closer pairs looked less alike** (r = −.37). As cut-outs the relation weakens (r = −.23).
+- **As photos, semantically closer pairs looked less alike** (r = −.35). As cut-outs the relation weakens (r = −.15).
 - **CLIP text similarity is a weak semantic measure.** It sits in a narrow band (.83–.93). THINGS SPoSE would
   separate pairs better if semantic distance matters for the analysis.
 
@@ -131,8 +131,8 @@ background grabs attention. Both scores are computed from the stimuli alone, bef
 | camel–elephant | 0.76 | 0.75 | +0.51 | 0.56 / 0.67 | Large |
 | rabbit–hamster | 0.84 | 0.65 | +0.48 | 0.51 / 0.56 | Large |
 | squirrel–monkey | 0.65 | 0.82 | +0.47 | 0.48 / 0.56 | Large |
-| turkey–goat | 0.91 | 0.41 | +0.32 | 0.50 / 0.57 | Moderate |
 | acorn–coconut | 0.83 | 0.41 | +0.24 | 0.53 / 0.27 | Moderate |
+| turkey–goat | 0.78 | 0.41 | +0.20 | 0.46 / 0.57 | Moderate |
 | bulldozer–tractor | 0.45 | 0.73 | +0.18 | 0.43 / 0.31 | Small |
 | butterfly–ladybug | 0.54 | 0.64 | +0.17 | 0.45 / 0.56 | Small |
 | turtle–frog | 0.51 | 0.62 | +0.14 | 0.47 / 0.36 | Small |

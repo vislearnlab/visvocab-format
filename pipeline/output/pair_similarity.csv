@@ -1,7 +1,7 @@
 pair,domain,text,photo,cutout
 cloud-tree,nature,0.832,0.809,0.797
 squirrel-monkey,animal,0.876,0.743,0.791
-turkey-goat,animal,0.856,0.735,0.738
+turkey-goat,animal,0.856,0.677,0.658
 duck-chicken,animal,0.916,0.677,0.752
 balloon-kite,artifact,0.827,0.716,0.76
 truck-car,artifact,0.93,0.469,0.639
