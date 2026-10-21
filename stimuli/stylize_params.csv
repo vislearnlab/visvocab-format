@@ -1,33 +1,97 @@
-style,word,seed,cscale,label,round,note
-illustration,cloud,4,0.9,single white cloud in a clear blue sky,2,no rain; best silhouette (IoU .89 vs .72/.56); small sun lies outside the mask
-illustration,tree,1,0.7,tree,0,
-illustration,squirrel,3,0.9,grey squirrel sitting,2,"grey squirrel, no white paw blob; IoU .93"
-illustration,monkey,3,0.9,monkey sitting,2,silhouette fixed: IoU .89 area x1.03 (was .60 x1.66); s2/s4 still x2.08/x1.46
-illustration,turkey,4,0.9,single turkey with one head,2,one head (from turkey_11s); IoU .96
-illustration,goat,1,0.7,goat,0,
-illustration,duck,1,0.7,duck,0,
-illustration,chicken,1,0.7,chicken,0,
-illustration,balloon,1,0.7,red party balloon,1,
-illustration,kite,1,0.7,kite,0,
-illustration,truck,1,0.7,truck,0,
-illustration,car,1,0.7,car,0,
-illustration,lizard,1,0.7,brown lizard,1,
-illustration,snake,3,0.9,brown and black patterned snake,2,brown/black like the photo (s4 orange-red); IoU .88
-illustration,turtle,1,0.7,turtle,0,
-illustration,frog,1,0.7,yellow spotted frog,1,
-illustration,crow,2,0.9,black crow standing on grass,2,no grey band at the bottom
-illustration,penguin,1,0.7,penguin,0,
-illustration,camel,4,0.9,camel standing on four legs,2,legs clearest; all three IoU .93
-illustration,elephant,1,0.7,elephant,0,
-illustration,snail,4,0.9,garden snail with a single pair of eye stalks,2,single pair of eye stalks; best silhouette (IoU .95)
-illustration,worm,1,0.7,worm,0,
-illustration,bulldozer,1,0.7,bulldozer,0,
-illustration,tractor,1,0.7,tractor,0,
-illustration,acorn,3,0.9,brown acorn with a brown scaly cap,2,"brown cap; s2 has a green leaf inside the cut-out, s4 a white band"
-illustration,coconut,1,0.7,coconut,0,
-illustration,cow,4,0.9,black and white holstein cow,2,"black and white (s2 grey-blue, s3 pinkish belly)"
-illustration,horse,1,0.7,horse,0,
-illustration,butterfly,1,0.7,butterfly,0,
-illustration,ladybug,1,0.7,ladybug,0,
-illustration,rabbit,2,0.9,brown wild rabbit,2,least grass inside the cut-out (3.3% green vs 8.6% before)
-illustration,hamster,4,0.9,hamster,2,silhouette fixed: IoU .85 area x1.03 (was .66 x1.37); s2/s3 still x1.25
+style,word,seed,cscale,control,label,round,note
+illustration,cloud,4,0.9,canny,single white cloud in a clear blue sky,2,no rain; best silhouette (IoU .89 vs .72/.56); small sun lies outside the mask
+illustration,tree,1,0.7,canny,tree,0,
+illustration,squirrel,3,0.9,canny,grey squirrel sitting,2,"grey squirrel, no white paw blob; IoU .93"
+illustration,monkey,3,0.9,canny,monkey sitting,2,silhouette fixed: IoU .89 area x1.03 (was .60 x1.66); s2/s4 still x2.08/x1.46
+illustration,turkey,4,0.9,canny,single turkey with one head,2,one head (from turkey_11s); IoU .96
+illustration,goat,1,0.7,canny,goat,0,
+illustration,duck,1,0.7,canny,duck,0,
+illustration,chicken,1,0.7,canny,chicken,0,
+illustration,balloon,1,0.7,canny,red party balloon,1,
+illustration,kite,1,0.7,canny,kite,0,
+illustration,truck,1,0.7,canny,truck,0,
+illustration,car,1,0.7,canny,car,0,
+illustration,lizard,1,0.7,canny,brown lizard,1,
+illustration,snake,3,0.9,canny,brown and black patterned snake,2,brown/black like the photo (s4 orange-red); IoU .88
+illustration,turtle,1,0.7,canny,turtle,0,
+illustration,frog,1,0.7,canny,yellow spotted frog,1,
+illustration,crow,2,0.9,canny,black crow standing on grass,2,no grey band at the bottom
+illustration,penguin,1,0.7,canny,penguin,0,
+illustration,camel,4,0.9,canny,camel standing on four legs,2,legs clearest; all three IoU .93
+illustration,elephant,1,0.7,canny,elephant,0,
+illustration,snail,4,0.9,canny,garden snail with a single pair of eye stalks,2,single pair of eye stalks; best silhouette (IoU .95)
+illustration,worm,1,0.7,canny,worm,0,
+illustration,bulldozer,1,0.7,canny,bulldozer,0,
+illustration,tractor,1,0.7,canny,tractor,0,
+illustration,acorn,3,0.9,canny,brown acorn with a brown scaly cap,2,"brown cap; s2 has a green leaf inside the cut-out, s4 a white band"
+illustration,coconut,1,0.7,canny,coconut,0,
+illustration,cow,4,0.9,canny,black and white holstein cow,2,"black and white (s2 grey-blue, s3 pinkish belly)"
+illustration,horse,1,0.7,canny,horse,0,
+illustration,butterfly,1,0.7,canny,butterfly,0,
+illustration,ladybug,1,0.7,canny,ladybug,0,
+illustration,rabbit,2,0.9,canny,brown wild rabbit,2,least grass inside the cut-out (3.3% green vs 8.6% before)
+illustration,hamster,4,0.9,canny,hamster,2,silhouette fixed: IoU .85 area x1.03 (was .66 x1.37); s2/s3 still x1.25
+line,cloud,1,0.8,object,cloud,0,"both poor: canny barely draws the cloud, object fills the sky with scales; needs a redo"
+line,tree,1,0.8,canny,tree,0,less background ink (0.01 vs 0.23 outside the object)
+line,squirrel,1,0.8,canny,squirrel,0,less background ink (0.00 vs 0.00 outside the object)
+line,monkey,1,0.8,object,monkey,0,less background ink (0.00 vs 0.08 outside the object)
+line,turkey,1,0.8,canny,turkey,0,cluttered in both; needs a redo
+line,goat,1,0.8,canny,goat,0,less background ink (0.08 vs 0.10 outside the object)
+line,duck,1,0.8,canny,duck,0,less background ink (0.02 vs 0.16 outside the object)
+line,chicken,1,0.8,object,chicken,0,less background ink (0.05 vs 0.17 outside the object)
+line,balloon,1,0.8,canny,party balloon,0,object version drew a bunch of balloons
+line,kite,1,0.8,canny,kite,0,less background ink (0.02 vs 0.06 outside the object)
+line,truck,1,0.8,canny,truck,0,less background ink (0.11 vs 0.20 outside the object)
+line,car,1,0.8,canny,car,0,less background ink (0.11 vs 0.16 outside the object)
+line,lizard,1,0.8,object,lizard,0,less background ink (0.02 vs 0.35 outside the object)
+line,snake,1,0.8,object,snake,0,less background ink (0.11 vs 0.22 outside the object)
+line,turtle,1,0.8,object,turtle,0,less background ink (0.16 vs 0.18 outside the object)
+line,frog,1,0.8,object,frog,0,less background ink (0.00 vs 0.19 outside the object)
+line,crow,1,0.8,canny,crow,0,cluttered in both; needs a redo
+line,penguin,1,0.8,canny,penguin,0,cluttered in both; needs a redo
+line,camel,1,0.8,canny,camel,0,less background ink (0.02 vs 0.08 outside the object)
+line,elephant,1,0.8,object,elephant,0,less background ink (0.01 vs 0.11 outside the object)
+line,snail,1,0.8,object,snail,0,less background ink (0.01 vs 0.06 outside the object)
+line,worm,1,0.8,object,worm,0,less background ink (0.00 vs 0.43 outside the object)
+line,bulldozer,1,0.8,object,bulldozer,0,less background ink (0.09 vs 0.10 outside the object)
+line,tractor,1,0.8,object,tractor,0,less background ink (0.05 vs 0.05 outside the object)
+line,acorn,1,0.8,canny,acorn,0,cluttered in both (sunburst background); needs a redo
+line,coconut,1,0.8,canny,coconut,0,cluttered in both; needs a redo
+line,cow,1,0.8,object,cow,0,less background ink (0.00 vs 0.06 outside the object)
+line,horse,1,0.8,canny,horse,0,less background ink (0.03 vs 0.11 outside the object)
+line,butterfly,1,0.8,canny,butterfly,0,less background ink (0.05 vs 0.16 outside the object)
+line,ladybug,1,0.8,object,ladybug,0,less background ink (0.00 vs 0.02 outside the object)
+line,rabbit,1,0.8,object,rabbit,0,less background ink (0.00 vs 0.19 outside the object)
+line,hamster,1,0.8,object,hamster,0,less background ink (0.00 vs 0.07 outside the object)
+doodle,cloud,1,0.6,outline,cloud,0,two clouds
+doodle,tree,1,0.6,outline,tree,0,"detailed sketch, not a doodle"
+doodle,squirrel,1,0.6,outline,squirrel,0,
+doodle,monkey,1,0.6,outline,monkey,0,
+doodle,turkey,1,0.6,outline,turkey,0,"detailed sketch, not a doodle"
+doodle,goat,1,0.6,outline,goat,0,"detailed sketch, not a doodle"
+doodle,duck,1,0.6,outline,duck,0,
+doodle,chicken,1,0.6,outline,chicken,0,"detailed sketch, not a doodle"
+doodle,balloon,1,0.6,outline,balloon,0,
+doodle,kite,1,0.6,outline,kite,0,
+doodle,truck,1,0.6,outline,truck,0,
+doodle,car,1,0.6,outline,car,0,
+doodle,lizard,1,0.6,outline,lizard,0,
+doodle,snake,1,0.6,outline,snake,0,does not fill its mask; cut-out mostly white
+doodle,turtle,1,0.6,outline,turtle,0,
+doodle,frog,1,0.6,outline,frog,0,
+doodle,crow,1,0.6,outline,crow,0,
+doodle,penguin,1,0.6,outline,penguin,0,
+doodle,camel,1,0.6,outline,camel,0,
+doodle,elephant,1,0.6,outline,elephant,0,"detailed sketch, not a doodle"
+doodle,snail,1,0.6,outline,snail,0,
+doodle,worm,1,0.6,outline,worm,0,tube with an eye
+doodle,bulldozer,1,0.6,outline,bulldozer,0,
+doodle,tractor,1,0.6,outline,tractor,0,"detailed sketch, not a doodle"
+doodle,acorn,1,0.6,outline,acorn,0,looks like garlic
+doodle,coconut,1,0.6,outline,coconut,0,hatched ball
+doodle,cow,1,0.6,outline,cow,0,doubled outline
+doodle,horse,1,0.6,outline,horse,0,
+doodle,butterfly,1,0.6,outline,butterfly,0,
+doodle,ladybug,1,0.6,outline,ladybug,0,
+doodle,rabbit,1,0.6,outline,rabbit,0,
+doodle,hamster,1,0.6,outline,hamster,0,

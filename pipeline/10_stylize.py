@@ -1,6 +1,7 @@
 # Stylized versions of the photo stimuli, each from the same 600 px crop so the object keeps its position and size:
 #   illustration  picture-book art: SDXL img2img from the photo, canny ControlNet on the smoothed photo's edges
-#   line          picture-book line art: SDXL from the edge map alone, then only thin dark strokes are kept
+#   line          picture-book line art: SDXL from the edge map alone, then only thin dark strokes are kept. Per word, the
+#                 edge map is either the whole photo's (control=canny) or only the object's own edges + outline (control=object)
 #   doodle        QuickDraw / kiddraw-style sketch: SDXL steered only by the object's outline, then strokes kept
 # Each style also gets a cut-out: the stylized image inside the photo's object mask, grey 130 outside.
 #
@@ -33,6 +34,7 @@ GEN, CANNY, STEPS, STRENGTH = 1024, (100, 200), 30, 1.0
 ap = argparse.ArgumentParser()
 ap.add_argument('style', choices=STYLES); ap.add_argument('--words', nargs='*'); ap.add_argument('--seeds', nargs='*', type=int)
 ap.add_argument('--cscale', type=float); ap.add_argument('--label', action='append', default=[]); ap.add_argument('--candidates', action='store_true')
+ap.add_argument('--control', choices=['canny', 'outline', 'object'])
 a = ap.parse_args(); S = STYLES[a.style]
 params = pd.read_csv(f'{STIM}/stylize_params.csv').query('style == @a.style').set_index('word') if os.path.exists(f'{STIM}/stylize_params.csv') else pd.DataFrame()
 labels = dict(l.split('=', 1) for l in a.label)
@@ -54,14 +56,16 @@ for w in a.words or all_words():
     p = params.loc[w] if w in params.index else {}
     seeds = a.seeds or [int(p.get('seed', 1))]
     cscale = a.cscale or float(p.get('cscale', S['cscale']))
+    control = a.control or (p.get('control') if isinstance(p.get('control'), str) else S['control'])
     label = labels.get(w) or (p.get('label') if isinstance(p.get('label'), str) else w)
     big = Image.open(f'{STIM}/images/photo/{w}.png').convert('RGB').resize((GEN, GEN), Image.LANCZOS)
-    if S['control'] == 'canny':     # edge-preserving blur first so only object/scene contours survive, not photo texture
+    mg = (np.array(mask(w, GEN)) > 127).astype(np.uint8); cs, _ = cv2.findContours(mg, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    if control in ('canny', 'object'):   # edge-preserving blur first so only object/scene contours survive, not photo texture
         ed = cv2.Canny(cv2.bilateralFilter(cv2.pyrMeanShiftFiltering(np.array(big), 15, 30), 9, 75, 75), *CANNY)
-    else:                           # the object's silhouette only
-        ed = np.zeros((GEN, GEN), np.uint8)
-        cs, _ = cv2.findContours((np.array(mask(w, GEN)) > 127).astype(np.uint8), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-        cv2.drawContours(ed, cs, -1, 255, 3)
+        if control == 'object':           # keep only edges on or near the object (mask dilated 12 px), plus its outline
+            ed = np.where(cv2.dilate(mg, np.ones((25, 25), np.uint8)) > 0, ed, 0).astype(np.uint8); cv2.drawContours(ed, cs, -1, 255, 3)
+    else:                                 # the object's silhouette only
+        ed = np.zeros((GEN, GEN), np.uint8); cv2.drawContours(ed, cs, -1, 255, 3)
     ctrl = Image.fromarray(np.stack([ed] * 3, -1))
     mk = cv2.GaussianBlur(np.array(mask(w, C), np.float32) / 255, (3, 3), 0.7)[..., None]
     for seed in seeds:
@@ -77,4 +81,4 @@ for w in a.words or all_words():
         name = f'{w}_s{seed}' if a.candidates else w
         im.save(f'{out}/{name}.png')
         Image.fromarray((mk * np.array(im, np.float32) + (1 - mk) * GREY).round().astype(np.uint8)).save(f'{outc}/{name}.png')
-        print(a.style, name, f'cscale {cscale} label "{label}"', f'{time.time() - t:.0f}s', flush=True)
+        print(a.style, name, f'{control} cscale {cscale} label "{label}"', f'{time.time() - t:.0f}s', flush=True)

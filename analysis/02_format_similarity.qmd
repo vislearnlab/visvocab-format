@@ -154,18 +154,23 @@ for m, name in MODELS.items():
 
 ## What this means for the format hypothesis
 
-- **Models do not predict that abstraction makes the pairs harder.** Relative to their format, DINOv3 sees the pairs
-  slightly *more* alike in illustrations (excess .10 → .13), CLIP slightly *less* alike (.10 → .07–.09); both are small
-  next to the rise in raw similarity, and the two models disagree on direction. CLIP word → image 2AFC is at ceiling
-  in every format (≥ .99 mean), so no format makes the words harder for it.
-- **If children recognise the words better in illustrations or line drawings**, that is a format effect the
-  embedding models do not predict: a model–child dissociation. The interpretation would be that the details
-  abstraction removes (texture, lighting, background) are noise for toddlers, not cues.
-- **The item-level test is sharper.** Some pairs' excess moves in opposite directions across formats (e.g.
-  lizard–snake drops, acorn–coconut rises). A format × model-excess interaction on baseline-corrected looking tests
-  whether the item-specific changes predict children's item-specific changes. A format main effect with a null
+- **Raw similarity rises steadily with abstraction** (DINOv3 .13 photo → .34 doodle; CLIP .71 → .82–.83), but almost all
+  of the rise is the same-format baseline: in a sparse style every image looks like every other.
+- **Relative to its format, the pair-specific similarity barely moves, and the two models disagree on direction.**
+  DINOv3 excess goes .10 (photo) → .13 (illustration) → .10–.17 (line, doodle); CLIP goes .10 → .08 → .05–.07.
+- **Model recognition does fall for the most abstract formats.** CLIP word → image 2AFC is at ceiling for photos,
+  cut-outs and illustrations (≥ .99) but drops for line drawings and doodles (.89–.93 mean, with individual words
+  near or below chance). Some of that is stimulus quality (the acorn doodle looks like garlic; the snake line drawing
+  is buried in background scribble), so the per-word failures should be re-checked after the redos.
+- **That gives a clean prediction to set against children.** The models say abstraction leaves pairs about as
+  separable (embeddings) or makes the words harder to recognise (CLIP 2AFC). If toddlers instead recognise words as
+  well or better in illustrations and line drawings, the details removed by abstraction (texture, lighting,
+  background) were noise for them rather than cues: a model–child dissociation.
+- **The item-level test is sharper.** Some pairs' excess moves in opposite directions across formats (lizard–snake
+  drops, acorn–coconut and cow–horse rise). A format × model-score interaction on baseline-corrected looking tests
+  whether item-specific model changes predict children's item-specific changes; a format main effect with a null
   interaction is the dissociation.
-- **Caveats.** Cosine on a pooled embedding is one readout of a model, not its discriminability. CLIP 2AFC is near
-  ceiling. Illustration cut-outs differ from photo cut-outs in colour as well as detail, so line drawings and doodles
-  are the cleaner "fewer details" contrast. With 16 pairs the item-level interaction has little power; the format main
-  effect is the realistic primary test.
+- **Caveats.** Cosine on a pooled embedding is one readout of a model. Illustrations differ from photos in colour as
+  well as detail, so line drawings and doodles are the cleaner "fewer details" contrast, but they are also the
+  noisiest stimuli right now (see `04_stylized_stimuli`). With 16 pairs the item-level interaction has little power;
+  the format main effect is the realistic primary test.

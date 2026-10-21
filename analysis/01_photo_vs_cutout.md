@@ -73,13 +73,13 @@ print(f"visual vs semantic: photo r = {stats.pearsonr(sim.photo, sim.text)[0]:.2
     bulldozer-tractor artifact 0.875  0.700   0.736   0.036
          lizard-snake   animal 0.901  0.809   0.839   0.030
           turtle-frog   animal 0.886  0.805   0.824   0.019
-          turkey-goat   animal 0.856  0.735   0.738   0.003
            snail-worm   animal 0.881  0.770   0.761  -0.009
            cloud-tree   nature 0.832  0.809   0.797  -0.012
+          turkey-goat   animal 0.856  0.677   0.658  -0.019
     butterfly-ladybug   animal 0.836  0.776   0.753  -0.023
 
-    mean visual similarity 0.716 -> 0.764; 13/16 pairs increase
-    visual vs semantic: photo r = -0.37, cut-out r = -0.22
+    mean visual similarity 0.712 -> 0.759; 12/16 pairs increase
+    visual vs semantic: photo r = -0.35, cut-out r = -0.14
 
 ``` python
 fig, ax = plt.subplots(figsize=(6, 5))
@@ -91,7 +91,7 @@ ax.scatter(sim.text.values, sim.cutout.values, color='tab:blue', label='cut-out'
 ax.set_xlabel('semantic similarity (CLIP text)'); ax.set_ylabel('visual similarity (CLIP image)'); ax.legend(frameon=False)
 ```
 
-    <matplotlib.legend.Legend at 0x7f9eb04963a0>
+    <matplotlib.legend.Legend at 0x7fca90338f10>
 
 ![](01_photo_vs_cutout_files/figure-commonmark/cell-5-output-2.png)
 
@@ -113,7 +113,7 @@ print(f"\nmean |imbalance| photo {w.photo.abs().mean():.3f}, cut-out {w.cutout.a
     balloon-kite      -0.356  -0.245      -0.112
     bulldozer-tractor  0.250   0.145      -0.105
     squirrel-monkey   -0.195  -0.100      -0.095
-    turkey-goat        0.104   0.072      -0.031
+    turkey-goat        0.054   0.033      -0.021
     snail-worm        -0.071  -0.069      -0.002
     duck-chicken      -0.002  -0.007       0.004
     truck-car          0.002   0.016       0.014
@@ -125,7 +125,7 @@ print(f"\nmean |imbalance| photo {w.photo.abs().mean():.3f}, cut-out {w.cutout.a
     crow-penguin      -0.134  -0.278       0.144
     lizard-snake      -0.223  -0.403       0.179
 
-    mean |imbalance| photo 0.164, cut-out 0.162
+    mean |imbalance| photo 0.161, cut-out 0.159
 
 ## Item-level moderators
 
@@ -151,8 +151,8 @@ print(f"CLIP recognition: photo min {mod.rec_photo.min():.3f}, cut-out min {mod.
        camel-elephant       0.76      0.56                  0.51       0.75      0.67
        rabbit-hamster       0.84      0.51                  0.48       0.65      0.56
       squirrel-monkey       0.64      0.48                  0.47       0.82      0.56
-          turkey-goat       0.91      0.50                  0.32       0.42      0.57
         acorn-coconut       0.83      0.53                  0.24       0.41      0.27
+          turkey-goat       0.78      0.46                  0.20       0.42      0.57
     bulldozer-tractor       0.45      0.43                  0.18       0.73      0.31
     butterfly-ladybug       0.54      0.45                  0.17       0.64      0.56
           turtle-frog       0.51      0.47                  0.14       0.62      0.36
@@ -162,7 +162,7 @@ print(f"CLIP recognition: photo min {mod.rec_photo.min():.3f}, cut-out min {mod.
          lizard-snake       0.56      0.76                 -0.10       0.34      0.43
            snail-worm       0.38      0.63                 -0.10       0.51      0.74
 
-    diagnosticity vs saliency share across images: r = 0.17
+    diagnosticity vs saliency share across images: r = 0.18
     CLIP recognition: photo min 0.908, cut-out min 0.927 (at ceiling)
 
 ## What CHS projects for cut-outs
@@ -182,7 +182,7 @@ print(q[['pair', 'obs', 'sim_chs', 'sim_cut', 'dsim', 'proj', 'proj_up', 'shift'
          duck-chicken  0.094    0.745    0.752  0.075  0.088    0.080 -0.006
          balloon-kite  0.093    0.788    0.760  0.044  0.089    0.085 -0.004
       squirrel-monkey  0.091    0.703    0.791  0.048  0.087    0.082 -0.004
-          turkey-goat  0.089    0.731    0.738  0.003  0.088    0.088 -0.001
+          turkey-goat  0.089    0.731    0.658 -0.019  0.090    0.092  0.001
          lizard-snake  0.079    0.813    0.839  0.030  0.077    0.074 -0.002
             truck-car  0.071    0.468    0.639  0.170  0.058    0.040 -0.013
           turtle-frog  0.067    0.744    0.824  0.019  0.065    0.063 -0.002
@@ -200,7 +200,7 @@ ax.set_yticks(y); ax.set_yticklabels(q.pair); ax.axvline(0, color='grey', lw=.6)
 ax.set_xlabel('baseline-corrected target looking'); ax.legend(frameon=False, fontsize=8)
 ```
 
-    <matplotlib.legend.Legend at 0x7f9ed07b21c0>
+    <matplotlib.legend.Legend at 0x7fca9029a220>
 
 ![](01_photo_vs_cutout_files/figure-commonmark/cell-9-output-2.png)
 

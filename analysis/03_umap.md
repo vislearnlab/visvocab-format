@@ -84,20 +84,28 @@ for m, name in MODELS.items():
 ```
 
     DINOv3 ViT-B/16 (row = query format, column = searched format; chance ≈ 1/32)
-                         CHS photo  photo  cutout  illustration  illustration_cutout
-    CHS photo                  NaN   0.94     1.0          0.97                 0.94
-    photo                     0.94    NaN     1.0          1.00                 1.00
-    cutout                    0.97   1.00     NaN          1.00                 1.00
-    illustration              1.00   1.00     1.0           NaN                 1.00
-    illustration_cutout       1.00   1.00     1.0          1.00                  NaN 
+                         CHS photo  photo  cutout  illustration  illustration_cutout  line  line_cutout  doodle  doodle_cutout
+    CHS photo                  NaN   0.94    1.00          1.00                 0.97  0.91         0.97    0.91           0.84
+    photo                     0.94    NaN    1.00          1.00                 1.00  1.00         1.00    0.94           0.94
+    cutout                    0.97   1.00     NaN          1.00                 1.00  1.00         1.00    0.97           0.94
+    illustration              1.00   1.00    1.00           NaN                 1.00  1.00         1.00    0.94           0.91
+    illustration_cutout       1.00   1.00    1.00          1.00                  NaN  1.00         1.00    0.97           0.94
+    line                      0.88   0.94    0.97          0.97                 0.97   NaN         0.97    0.94           0.91
+    line_cutout               0.97   1.00    1.00          1.00                 1.00  1.00          NaN    0.94           0.94
+    doodle                    0.88   0.91    0.94          0.97                 0.94  0.88         0.94     NaN           1.00
+    doodle_cutout             0.88   0.97    0.94          0.97                 0.94  0.91         0.94    1.00            NaN 
 
     CLIP ViT-B/32 (row = query format, column = searched format; chance ≈ 1/32)
-                         CHS photo  photo  cutout  illustration  illustration_cutout
-    CHS photo                  NaN   0.97    0.97           1.0                 0.97
-    photo                     1.00    NaN    1.00           1.0                 1.00
-    cutout                    0.97   1.00     NaN           1.0                 1.00
-    illustration              1.00   1.00    1.00           NaN                 1.00
-    illustration_cutout       1.00   1.00    1.00           1.0                  NaN 
+                         CHS photo  photo  cutout  illustration  illustration_cutout  line  line_cutout  doodle  doodle_cutout
+    CHS photo                  NaN   0.97    0.97          0.97                 0.94  0.66         0.78    0.81           0.78
+    photo                     1.00    NaN    1.00          1.00                 1.00  0.69         0.78    0.75           0.78
+    cutout                    0.97   1.00     NaN          1.00                 1.00  0.72         0.94    0.81           0.88
+    illustration              1.00   0.97    0.97           NaN                 1.00  0.69         0.81    0.75           0.78
+    illustration_cutout       1.00   1.00    1.00          1.00                  NaN  0.66         0.88    0.81           0.94
+    line                      0.72   0.69    0.78          0.81                 0.75   NaN         0.97    0.78           0.72
+    line_cutout               0.81   0.84    0.88          0.84                 0.88  0.97          NaN    0.81           0.88
+    doodle                    0.91   0.84    0.88          0.91                 0.91  0.69         0.75     NaN           1.00
+    doodle_cutout             0.81   0.81    0.91          0.75                 0.84  0.75         0.91    1.00            NaN 
 
 The illustrations are traced from the same photos (same crop, same
 layout), so matching between photo, cut-out and illustration versions is

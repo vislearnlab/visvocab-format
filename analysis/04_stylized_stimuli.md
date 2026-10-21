@@ -23,22 +23,25 @@ print(sp[sp.label != sp.word].to_string(index=False))
 ```
 
     style
+    doodle          32
     illustration    32
-           style     word  seed  cscale                                         label  round                                                                           note
-    illustration    cloud     4     0.9        single white cloud in a clear blue sky      2 no rain; best silhouette (IoU .89 vs .72/.56); small sun lies outside the mask
-    illustration squirrel     3     0.9                         grey squirrel sitting      2                                      grey squirrel, no white paw blob; IoU .93
-    illustration   monkey     3     0.9                                monkey sitting      2  silhouette fixed: IoU .89 area x1.03 (was .60 x1.66); s2/s4 still x2.08/x1.46
-    illustration   turkey     4     0.9                   single turkey with one head      2                                            one head (from turkey_11s); IoU .96
-    illustration  balloon     1     0.7                             red party balloon      1                                                                            NaN
-    illustration   lizard     1     0.7                                  brown lizard      1                                                                            NaN
-    illustration    snake     3     0.9               brown and black patterned snake      2                            brown/black like the photo (s4 orange-red); IoU .88
-    illustration     frog     1     0.7                           yellow spotted frog      1                                                                            NaN
-    illustration     crow     2     0.9                  black crow standing on grass      2                                                     no grey band at the bottom
-    illustration    camel     4     0.9                   camel standing on four legs      2                                               legs clearest; all three IoU .93
-    illustration    snail     4     0.9 garden snail with a single pair of eye stalks      2                           single pair of eye stalks; best silhouette (IoU .95)
-    illustration    acorn     3     0.9            brown acorn with a brown scaly cap      2             brown cap; s2 has a green leaf inside the cut-out, s4 a white band
-    illustration      cow     4     0.9                  black and white holstein cow      2                               black and white (s2 grey-blue, s3 pinkish belly)
-    illustration   rabbit     2     0.9                             brown wild rabbit      2                     least grass inside the cut-out (3.3% green vs 8.6% before)
+    line            32
+           style     word  seed  cscale control                                         label  round                                                                           note
+    illustration    cloud     4     0.9   canny        single white cloud in a clear blue sky      2 no rain; best silhouette (IoU .89 vs .72/.56); small sun lies outside the mask
+    illustration squirrel     3     0.9   canny                         grey squirrel sitting      2                                      grey squirrel, no white paw blob; IoU .93
+    illustration   monkey     3     0.9   canny                                monkey sitting      2  silhouette fixed: IoU .89 area x1.03 (was .60 x1.66); s2/s4 still x2.08/x1.46
+    illustration   turkey     4     0.9   canny                   single turkey with one head      2                                            one head (from turkey_11s); IoU .96
+    illustration  balloon     1     0.7   canny                             red party balloon      1                                                                            NaN
+    illustration   lizard     1     0.7   canny                                  brown lizard      1                                                                            NaN
+    illustration    snake     3     0.9   canny               brown and black patterned snake      2                            brown/black like the photo (s4 orange-red); IoU .88
+    illustration     frog     1     0.7   canny                           yellow spotted frog      1                                                                            NaN
+    illustration     crow     2     0.9   canny                  black crow standing on grass      2                                                     no grey band at the bottom
+    illustration    camel     4     0.9   canny                   camel standing on four legs      2                                               legs clearest; all three IoU .93
+    illustration    snail     4     0.9   canny garden snail with a single pair of eye stalks      2                           single pair of eye stalks; best silhouette (IoU .95)
+    illustration    acorn     3     0.9   canny            brown acorn with a brown scaly cap      2             brown cap; s2 has a green leaf inside the cut-out, s4 a white band
+    illustration      cow     4     0.9   canny                  black and white holstein cow      2                               black and white (s2 grey-blue, s3 pinkish belly)
+    illustration   rabbit     2     0.9   canny                             brown wild rabbit      2                     least grass inside the cut-out (3.3% green vs 8.6% before)
+            line  balloon     1     0.8   canny                                 party balloon      0                                        object version drew a bunch of balloons
 
 Words whose prompt label differs from the bare word: “balloon” alone
 drifts to a hot-air balloon, and lizard/frog drift to green.
@@ -136,3 +139,120 @@ print(sp[(sp['style'] == 'illustration') & (sp['round'] == 2)][['word', 'seed', 
          cow     4                               black and white (s2 grey-blue, s3 pinkish belly)
       rabbit     2                     least grass inside the cut-out (3.3% green vs 8.6% before)
      hamster     4        silhouette fixed: IoU .85 area x1.03 (was .66 x1.37); s2/s3 still x1.25
+
+## Line drawings: two edge recipes, picked per word
+
+Line drawings are SDXL from an edge map alone (no photo init), then only
+thin dark strokes are kept. Two edge maps were tried for all 32 words;
+both sets are in
+`stimuli/images/candidates/line_{canny,object}{,_cutout}/`
+(`docs/figures/line_candidates.png`: top row = canny, bottom row =
+object):
+
+- **canny**: edges of the whole smoothed photo. Textured backgrounds
+  (leaf litter, sand, foliage) turn into dense scribble, burying lizard,
+  snake, frog and worm.
+- **object**: only edges on or near the object (mask dilated 12 px) plus
+  its outline. The object is cleaner, but with no background constraint
+  SDXL sometimes invents a busy background (cloud scales, sunbursts, a
+  bunch of balloons).
+
+`stimuli/images/line/` takes, per word, the version with less ink
+outside the object, provided the object itself is drawn (ink density
+inside the mask ≥ .03). One override: balloon keeps canny because the
+object version drew a bunch of balloons.
+
+``` python
+lp = pd.read_csv(f'{OUT}/line_version_pick.csv')
+print(lp.control.value_counts().to_string(), '\n')
+print(sp[sp['style'] == 'line'][['word', 'control', 'note']].to_string(index=False))
+```
+
+    control
+    object    16
+    canny     16 
+
+         word control                                                                                    note
+        cloud  object both poor: canny barely draws the cloud, object fills the sky with scales; needs a redo
+         tree   canny                                   less background ink (0.01 vs 0.23 outside the object)
+     squirrel   canny                                   less background ink (0.00 vs 0.00 outside the object)
+       monkey  object                                   less background ink (0.00 vs 0.08 outside the object)
+       turkey   canny                                                         cluttered in both; needs a redo
+         goat   canny                                   less background ink (0.08 vs 0.10 outside the object)
+         duck   canny                                   less background ink (0.02 vs 0.16 outside the object)
+      chicken  object                                   less background ink (0.05 vs 0.17 outside the object)
+      balloon   canny                                                 object version drew a bunch of balloons
+         kite   canny                                   less background ink (0.02 vs 0.06 outside the object)
+        truck   canny                                   less background ink (0.11 vs 0.20 outside the object)
+          car   canny                                   less background ink (0.11 vs 0.16 outside the object)
+       lizard  object                                   less background ink (0.02 vs 0.35 outside the object)
+        snake  object                                   less background ink (0.11 vs 0.22 outside the object)
+       turtle  object                                   less background ink (0.16 vs 0.18 outside the object)
+         frog  object                                   less background ink (0.00 vs 0.19 outside the object)
+         crow   canny                                                         cluttered in both; needs a redo
+      penguin   canny                                                         cluttered in both; needs a redo
+        camel   canny                                   less background ink (0.02 vs 0.08 outside the object)
+     elephant  object                                   less background ink (0.01 vs 0.11 outside the object)
+        snail  object                                   less background ink (0.01 vs 0.06 outside the object)
+         worm  object                                   less background ink (0.00 vs 0.43 outside the object)
+    bulldozer  object                                   less background ink (0.09 vs 0.10 outside the object)
+      tractor  object                                   less background ink (0.05 vs 0.05 outside the object)
+        acorn   canny                                   cluttered in both (sunburst background); needs a redo
+      coconut   canny                                                         cluttered in both; needs a redo
+          cow  object                                   less background ink (0.00 vs 0.06 outside the object)
+        horse   canny                                   less background ink (0.03 vs 0.11 outside the object)
+    butterfly   canny                                   less background ink (0.05 vs 0.16 outside the object)
+      ladybug  object                                   less background ink (0.00 vs 0.02 outside the object)
+       rabbit  object                                   less background ink (0.00 vs 0.19 outside the object)
+      hamster  object                                   less background ink (0.00 vs 0.07 outside the object)
+
+**Still poor in both versions**, needing a redo: cloud, acorn, coconut,
+crow, penguin, turkey. The line *cut-outs* are much less affected,
+because the mask removes the background clutter.
+
+## Doodles
+
+QuickDraw / kiddraw-style: SDXL steered only by the object’s outline
+(keeps position and size), crude-marker prompt, then the same stroke
+clean-up. Many come out as careful pen sketches rather than few-stroke
+doodles; a stronger “crude” push (lower ControlNet scale, a
+QuickDraw-trained model, or stroke simplification) would move them
+further along the continuum.
+
+``` python
+print(sp[(sp['style'] == 'doodle') & (sp.note != '')][['word', 'note']].to_string(index=False))
+```
+
+         word                                         note
+        cloud                                   two clouds
+         tree                detailed sketch, not a doodle
+     squirrel                                          NaN
+       monkey                                          NaN
+       turkey                detailed sketch, not a doodle
+         goat                detailed sketch, not a doodle
+         duck                                          NaN
+      chicken                detailed sketch, not a doodle
+      balloon                                          NaN
+         kite                                          NaN
+        truck                                          NaN
+          car                                          NaN
+       lizard                                          NaN
+        snake does not fill its mask; cut-out mostly white
+       turtle                                          NaN
+         frog                                          NaN
+         crow                                          NaN
+      penguin                                          NaN
+        camel                                          NaN
+     elephant                detailed sketch, not a doodle
+        snail                                          NaN
+         worm                             tube with an eye
+    bulldozer                                          NaN
+      tractor                detailed sketch, not a doodle
+        acorn                            looks like garlic
+      coconut                                 hatched ball
+          cow                              doubled outline
+        horse                                          NaN
+    butterfly                                          NaN
+      ladybug                                          NaN
+       rabbit                                          NaN
+      hamster                                          NaN

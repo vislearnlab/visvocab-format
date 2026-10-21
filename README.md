@@ -19,9 +19,10 @@ stimuli/
   images/cutout/{word}.png  the same crop, background -> RGB(130,130,130); object position and size unchanged
   images/background_only/   photo with the object's bounding box greyed out (used only to score background diagnosticity)
   images/illustration{,_cutout}/  picture-book versions of the same crop (SDXL + canny ControlNet), and their cut-outs in the photo mask
-  images/line{,_cutout}/, images/doodle{,_cutout}/   line drawings and QuickDraw-style doodles (added as they are finished)
+  images/line{,_cutout}/, images/doodle{,_cutout}/   line drawings and QuickDraw-style doodles (first pass; see analysis/04)
   images/history/round{k}/  earlier versions of regenerated stylized images (only the words that changed)
-  stylize_params.csv        seed, ControlNet scale and prompt label per style x word
+  images/candidates/        alternative versions not used in the stimuli (line drawings from both edge recipes)
+  stylize_params.csv        seed, ControlNet scale, edge control, prompt label and pick note per style x word
   images/calib_duck.jpg     calibration / get-ready image (copy of the hosted one)
   masks/{word}.png          SAM mask of the picked exemplar, full source resolution
   stim_stats.csv            object area, edge contact, centroid per stimulus

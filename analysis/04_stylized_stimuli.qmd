@@ -79,3 +79,38 @@ shape; the photo mask then trimmed the illustration's cut-out. The pick and the 
 ```{python}
 print(sp[(sp['style'] == 'illustration') & (sp['round'] == 2)][['word', 'seed', 'note']].to_string(index=False))
 ```
+
+## Line drawings: two edge recipes, picked per word
+
+Line drawings are SDXL from an edge map alone (no photo init), then only thin dark strokes are kept. Two edge maps
+were tried for all 32 words; both sets are in `stimuli/images/candidates/line_{canny,object}{,_cutout}/`
+(`docs/figures/line_candidates.png`: top row = canny, bottom row = object):
+
+- **canny**: edges of the whole smoothed photo. Textured backgrounds (leaf litter, sand, foliage) turn into dense
+  scribble, burying lizard, snake, frog and worm.
+- **object**: only edges on or near the object (mask dilated 12 px) plus its outline. The object is cleaner, but with
+  no background constraint SDXL sometimes invents a busy background (cloud scales, sunbursts, a bunch of balloons).
+
+`stimuli/images/line/` takes, per word, the version with less ink outside the object, provided the object itself is
+drawn (ink density inside the mask ≥ .03). One override: balloon keeps canny because the object version drew a bunch of
+balloons.
+
+```{python}
+lp = pd.read_csv(f'{OUT}/line_version_pick.csv')
+print(lp.control.value_counts().to_string(), '\n')
+print(sp[sp['style'] == 'line'][['word', 'control', 'note']].to_string(index=False))
+```
+
+**Still poor in both versions**, needing a redo: cloud, acorn, coconut, crow, penguin, turkey. The line *cut-outs* are
+much less affected, because the mask removes the background clutter.
+
+## Doodles
+
+QuickDraw / kiddraw-style: SDXL steered only by the object's outline (keeps position and size), crude-marker prompt,
+then the same stroke clean-up. Many come out as careful pen sketches rather than few-stroke doodles; a stronger
+"crude" push (lower ControlNet scale, a QuickDraw-trained model, or stroke simplification) would move them further
+along the continuum.
+
+```{python}
+print(sp[(sp['style'] == 'doodle') & (sp.note != '')][['word', 'note']].to_string(index=False))
+```
