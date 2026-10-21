@@ -1,0 +1,17 @@
+pair,domain,text,photo,cutout
+cloud-tree,nature,0.832,0.809,0.797
+squirrel-monkey,animal,0.876,0.743,0.791
+turkey-goat,animal,0.856,0.735,0.738
+duck-chicken,animal,0.916,0.677,0.752
+balloon-kite,artifact,0.827,0.716,0.76
+truck-car,artifact,0.93,0.469,0.639
+lizard-snake,animal,0.901,0.809,0.839
+turtle-frog,animal,0.886,0.805,0.824
+crow-penguin,animal,0.832,0.677,0.785
+camel-elephant,animal,0.863,0.672,0.757
+snail-worm,animal,0.881,0.77,0.761
+bulldozer-tractor,artifact,0.875,0.7,0.736
+acorn-coconut,plant,0.852,0.681,0.722
+cow-horse,animal,0.923,0.716,0.766
+butterfly-ladybug,animal,0.836,0.776,0.753
+rabbit-hamster,animal,0.869,0.701,0.805

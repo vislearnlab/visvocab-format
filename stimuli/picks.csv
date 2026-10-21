@@ -1,0 +1,33 @@
+word,pick,note
+cloud,cloud_03s,single cloud on clear sky - only cloud that cuts out
+tree,tree_02s,
+squirrel,squirrel_02s,
+monkey,monkey_04s,
+turkey,turkey_04s,single whole bird (05s is two birds)
+goat,goat_02n,elongation match to turkey
+duck,duck_01b,
+chicken,chicken2_01b,
+balloon,balloon_05s,single balloon
+kite,kite_04s,rainbow kite
+truck,truck_05s,
+car,car_11s,side view (03s was rotated)
+lizard,lizard_03n,elongation match (lizards are all >2.9)
+snake,snake_01b,elongation match to lizard
+turtle,turtle_04s,land turtle; 03s is a sea turtle
+frog,frog_02s,all legs visible
+crow,crow_05s,elongation match
+penguin,penguin_04s,elongation match
+camel,camel_04s,elongation match to elephant
+elephant,elephant_04n,
+snail,snail_01b,
+worm,worm_01b,
+bulldozer,bulldozer_04s,
+tractor,tractor_01b,
+cow,cow_05s,new pair
+horse,horse_05s,new pair
+butterfly,butterfly_02s,new pair
+ladybug,ladybug_01b,new pair
+rabbit,rabbit_02s,new pair
+hamster,hamster_05s,new pair
+acorn,acorn_01b,restored
+coconut,coconut_01b,restored

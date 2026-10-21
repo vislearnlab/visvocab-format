@@ -1,0 +1,10 @@
+# pipeline/ (Python 3.9+). 02_segment.py also needs transformers; on Apple silicon set PYTORCH_ENABLE_MPS_FALLBACK=1.
+torch>=2.0
+transformers>=4.40
+open_clip_torch>=2.24
+opencv-python>=4.8
+numpy>=1.24
+scipy>=1.9
+pandas>=1.3
+Pillow>=9.0
+matplotlib>=3.6

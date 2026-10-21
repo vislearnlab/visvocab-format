@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>visvocab-format preview</title>
+  <!-- The jsPsych and plugin versions CHS loads (CHS docs, jsPsych packages list). -->
+  <script src="https://unpkg.com/jspsych@8.0.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@2.0.0"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-video-button-response@2.0.0"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-preload@2.0.0"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-fullscreen@2.1.0"></script>
+  <link rel="stylesheet" href="https://unpkg.com/jspsych@8.0.3/css/jspsych.css">
+  <script>
+    // Local preview only: stand-ins for what CHS provides. On CHS, paste experiment.js alone.
+    //   python3 -m http.server 8000   (from the repo root)
+    //   http://localhost:8000/experiment/chs_jspsych/preview.html?list=0&skip=1
+    // skip=1 jumps straight to preload, calibration and the test trials.
+    window.VF_IMG_BASE = "../../stimuli/images/";
+    window.chs = { child: { id: "preview-child", attributes: { birthday: "2025-01-15" } } };
+    function stubPlugin(name) {
+      return class {
+        static info = { name: name, version: "0", parameters: {}, data: {} };
+        constructor(jsPsych) { this.jsPsych = jsPsych; }
+        trial(el) {
+          el.innerHTML = `<p style="color:#555">[CHS ${name} runs here on CHS]</p><button class="jspsych-btn">Next</button>`;
+          el.querySelector("button").onclick = () => this.jsPsych.finishTrial({ stub: name });
+        }
+      };
+    }
+    class StubRecordExtension {
+      static info = { name: "chs-trial-record-stub", version: "0", data: {} };
+      constructor(jsPsych) { this.jsPsych = jsPsych; }
+      initialize() { return Promise.resolve(); }
+      on_start() {} on_load() {}
+      on_finish() { return { recorded: "stub" }; }
+    }
+    window.chsRecord = { VideoConfigPlugin: stubPlugin("VideoConfig"), VideoConsentPlugin: stubPlugin("VideoConsent"), TrialRecordExtension: StubRecordExtension };
+    window.chsSurvey = { ExitSurveyPlugin: stubPlugin("ExitSurvey") };
+    // keep CHS's initJsPsych signature; dump data at the end for checking
+    const _init = initJsPsych;
+    window.initJsPsych = (opts) => _init(Object.assign({}, opts, {
+      on_finish: () => { window.vfData = jsPsych.data.get().values(); jsPsych.data.displayData("json"); },
+    }));
+  </script>
+</head>
+<body>
+  <script src="experiment.js"></script>
+</body>
+</html>

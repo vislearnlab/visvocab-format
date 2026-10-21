@@ -1,0 +1,17 @@
+pair,word_a,word_b,domain,source
+cloud-tree,cloud,tree,nature,chs
+squirrel-monkey,squirrel,monkey,animal,chs
+turkey-goat,turkey,goat,animal,chs
+duck-chicken,duck,chicken,animal,chs
+balloon-kite,balloon,kite,artifact,chs
+truck-car,truck,car,artifact,chs
+lizard-snake,lizard,snake,animal,chs
+turtle-frog,turtle,frog,animal,chs
+crow-penguin,crow,penguin,animal,chs
+camel-elephant,camel,elephant,animal,chs
+snail-worm,snail,worm,animal,chs
+bulldozer-tractor,bulldozer,tractor,artifact,chs
+acorn-coconut,acorn,coconut,plant,chs
+cow-horse,cow,horse,animal,new
+butterfly-ladybug,butterfly,ladybug,animal,new
+rabbit-hamster,rabbit,hamster,animal,new
